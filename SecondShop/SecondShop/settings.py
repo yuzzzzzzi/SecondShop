@@ -106,10 +106,6 @@ DATABASES = {
     #        'driver':'SQL Server Native Client 11.0',#选项，这个要先在操作系统上完成ODBC的连接创建，并连接成功，注意10.0这个地方，要和自己的ODBC版本一致
     #        'MARS_Connection': True,#使用MARS (multiple active result sets)，支持异步
     #    },
-	
-    },
-	# ---------------------
-	
 }
 
 # DATABASE_CONNECTION_POOLING = False
