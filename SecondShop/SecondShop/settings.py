@@ -79,6 +79,12 @@ WSGI_APPLICATION = 'SecondShop.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
+	# ------------------------SQLite3 数据库配置(无需安装，可直接使用)------------------------
+	'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+	# ------------------------MYSQL 数据库配置(需要安装MYSQL数据库)--------------------------
     #'default': {
     #    'ENGINE': 'django.db.backends.mysql',
     #    'NAME': 'second_shop',
@@ -87,27 +93,22 @@ DATABASES = {
     #    'HOST': '127.0.0.1',
     #    'PORT': '3306',
     #}
-
-    'default': {
-        #数据库引擎设置
-        'ENGINE': 'sql_server.pyodbc',
-        #要连接的数据库名
-        'NAME': 'second_shop',
-        #数据库用户名
-        'USER': '',
-        #数据库密码
-        'PASSWORD': '',
-        #数据库主机地址
-        'HOST': '127.0.0.1',
-        #数据库端口号，默认可以不写
-        'PORT': '1433',
-        #选项，这个要先在操作系统上完成ODBC的连接创建，并连接成功，注意10.0这个地方，要和自己的ODBC版本一致
-        'OPTIONS': {
-            'driver':'SQL Server Native Client 11.0',
-            #使用MARS (multiple active result sets)，支持异步
-            'MARS_Connection': True,
-        },
+	
+	# -----------------------SQL Server 数据库配置(需要安装SQL Server数据库)----------------------
+    #'default': {        
+    #    'ENGINE': 'sql_server.pyodbc',#数据库引擎设置        
+    #    'NAME': 'second_shop',#要连接的数据库名     
+    #    'USER': '',#数据库用户名
+    #    'PASSWORD': '',#数据库密码  
+    #    'HOST': '127.0.0.1',#数据库主机地址 
+    #    'PORT': '1433',#数据库端口号，默认可以不写 
+    #    'OPTIONS': {
+    #        'driver':'SQL Server Native Client 11.0',#选项，这个要先在操作系统上完成ODBC的连接创建，并连接成功，注意10.0这个地方，要和自己的ODBC版本一致
+    #        'MARS_Connection': True,#使用MARS (multiple active result sets)，支持异步
+    #    },
+	
     },
+	# ---------------------
 	
 }
 

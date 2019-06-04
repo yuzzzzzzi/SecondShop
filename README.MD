@@ -11,7 +11,7 @@
 
 ### SQLite3 数据库配置
 
-```
+```python
 DATABASES = {
 	#SQLite3 数据库配置(无需安装，可直接使用)
 	'default': {
@@ -23,7 +23,7 @@ DATABASES = {
 
 
 ### MYSQL 数据库配置(需要安装MYSQL数据库)
-```
+```python
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.mysql',
@@ -36,7 +36,7 @@ DATABASES = {
 }
 ```
 ### SQL Server 数据库配置(需要安装SQL Server数据库)
-```
+```python
 DATABASES = {
 	'default': {
 		#数据库引擎设置 
@@ -69,7 +69,7 @@ cd 到 `Scripts` 文件夹中 在命令行中执行`activate`命令就可以进�
 标志为在命令行的前面出现`(Second_Shop)`标记。
 ## 初始执行命令
 可不用切换目录直接执行以下命令
-```
+```bash
 (Second_Shop) E:\Second_Shop_mysql\Scripts>python ..\SecondShop\manage.py makemigrations
 (Second_Shop) E:\Second_Shop_mysql\Scripts>python ..\SecondShop\manage.py migrate
 (Second_Shop) E:\Second_Shop_mysql\Scripts>python ..\SecondShop\manage.py createsuperuser
@@ -84,7 +84,7 @@ cd 到 `Scripts` 文件夹中 在命令行中执行`activate`命令就可以进�
 `runserver`启动服务，执行后就可以在浏览器中进行查看了
 
 出现以下的内容即代表运行成功
-```
+```bash
 Watching for file changes with StatReloader
 Performing system checks...
 
