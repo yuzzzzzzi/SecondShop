@@ -1,0 +1,75 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<script src="../../static/js/jquery-3.3.1.js"></script>
+	<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	{% block content_head %}
+	{% endblock content_head %}
+	
+</head>
+<body style="background: #f2f2f2">
+	{% block header %}
+	{% endblock header %}
+	<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top flex-md-nowrap">
+	  <img src="/../static/favicon.ico">
+	  <a class="navbar-brand" href="{% url 'store:index' %}">SEC_SHOP</a>
+	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+	    <span class="navbar-toggler-icon"></span>
+	  </button>
+
+	  <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+	    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+	      <li class="nav-item active">
+	        <a class="nav-link" href="{% url 'store:shop' %}">商城 <span class="sr-only">(current)</span></a>
+	      </li>
+	      <li class="nav-item">
+	        <a class="nav-link" href="{% url 'store:shoppingcart' %}">购物车</a>
+	      </li>
+	      <li class="nav-item">
+	        <a class="nav-link" href="{% url 'store:mysale' %}">售货架</a>
+	      </li>
+	      <li class="nav-item">
+	        <a class="nav-link disabled" href="{% url 'store:purchased' %}">已购商品</a>
+	      </li>
+	    </ul>
+	    <form class="form-inline my-2 my-lg-0" action="{% url 'store:search' %}" method="get">
+	      {% csrf_token %}
+	      <input class="form-control mr-sm-2" type="search" name="q" placeholder="Search">
+	      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+	    </form>
+
+	    <ul class="navbar-nav" style="margin-left: 40px">
+			{% if user.is_authenticated %}
+				<li class="nav-item"><a class="nav-link" style="display: block;border-radius:50%;width: 50px;height: 50px;background: url(/media/{{ user.avatar }}); background-size: cover;" href="{% url 'user:person' user.id %}"></a></li>
+				<li class="nav-item"><a class="nav-link" href="{% url 'user:person' user.id %}">Hello,{{ user.nickname }}</a></li>
+				<li class="nav-item"><a class="nav-link disabled" href="{% url 'user:ulogout' %}">注销</a></li>
+			{% else %}
+				<li class="nav-item"><a class="nav-link" href="{% url 'user:register' %}">注册</a></li>
+				<li class="nav-item"><a class="nav-link disabled" href="{% url 'user:ulogin' %}">登录</a></li>
+			{% endif %}
+		</ul>
+
+		</div>
+	  </div>
+	</nav>
+	{% block content %}
+	{% endblock content %}
+	<footer class="footer" style="background: #f2f2f2">
+      	<div class="container">
+        	<span class="text-muted">
+        		© 2013-2018
+        		<a href="http://www.miibeian.gov.cn/" target="_blank">京ICP备 XXXXXXXX号</a>
+        		京公网安备 XXXXXXXXXXXXX
+        	</span>
+      	</div>
+    </footer>
+	
+</body>
+</html>

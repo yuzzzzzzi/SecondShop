@@ -1,0 +1,25 @@
+{% extends "store/base.html" %}
+{% load bootstrap4 %}
+{% block content_head %}
+<title>添加商品</title>
+{% endblock content_head %}
+{% block content %}
+
+<div class="container">
+	<div class="row clearfix" style="margin: 100px 0;">
+		<div class="col-md-12 column">
+			<h2>添加商品</h2>
+			<form method="post" action="{% url 'store:add_goods' %}" enctype="multipart/form-data" class="form">
+				{% csrf_token %}
+				{% bootstrap_form form %}
+				{% buttons %}
+					<button name="submit" class="btn btn-primary btn-block">添加</button>
+				{% endbuttons %}
+				<input type="hidden" name="next" value="{% url 'store:index' %}"/>
+			</form>
+		</div>
+	</div>
+</div>
+
+
+{% endblock content %}

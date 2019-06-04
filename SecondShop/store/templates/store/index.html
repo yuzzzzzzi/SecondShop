@@ -1,0 +1,166 @@
+{% extends "store/base.html" %}
+{% load bootstrap4 %}
+{% block content_head %}
+
+<title>二手交易</title>
+
+<style type="text/css">
+	h4{font-size: 5em;}
+	@media only screen and (min-width: 1000px){
+		h4{font-size: 8em;}
+	}
+</style>
+
+{% endblock content_head %}
+{% block header %}
+<div style="background-image: url(../../static/images/head-bg.jpg);background-attachment: scroll;background-repeat: no-repeat;background-position: 50% 50%;background-size: cover;position: fixed;height: 100%;width: 100%;z-index: -1"></div>
+{% endblock header %}
+{% block content %}
+<div class="carousel slide" id="carousel-426615" data-ride="carousel" style="height: 700px;">
+	<ol class="carousel-indicators">
+		<li data-slide-to="0" data-target="#carousel-426615" class="active">
+		</li>
+		<li data-slide-to="1" data-target="#carousel-426615">
+		</li>
+		<li data-slide-to="2" data-target="#carousel-426615">
+		</li>
+		<li data-slide-to="3" data-target="#carousel-426615">
+		</li>
+	</ol>
+	<div class="carousel-inner" style="height: 100%">
+		<div style="background: url(../static/images/dott.png) repeat 0px 0px;background-size:2px;height: 100%">
+			<div class="carousel-item active" >
+				<div class="carousel-caption" style="position: static;padding: 10em 10%;">
+					<h4>
+						Second-hand<br>transactions
+					</h4>
+					<p>
+						Exchange what you don't think is useful for something else that is equivalent to something you don't use. Not only can you save money, but also you can find a lot of things you like but can't buy. Second-hand market goods are more complex, grade has high and low. People who buy second-hand goods can pick out good and cheap goods in the market.
+					</p>
+				</div>
+			</div>
+			<div class="carousel-item">
+				<div class="carousel-caption" style="position: static;padding: 10em 20%;">
+					<h4>
+						二手<br>交易
+					</h4>
+					<p>
+						用自己觉得没用的东西换别人一些等价的闲置物品来再次利用。不但可以省钱，还可以淘到很多喜欢又买不到的东西。二手市场里面物品较为复杂，档次有高有低。买二手货物的人们可以在市场里挑选到物美价廉的物品。
+					</p>
+				</div>
+			</div>
+			<div class="carousel-item">
+				<div class="carousel-caption" style="position: static;padding: 10em 15%;">
+					<h4>
+						中古<br>売買
+					</h4>
+					<p>
+						自分が使っていないと思ったものを別の人の等価な空きものに取り替えて再利用する。お金も节约できますし、好きで买えないものもたくさんあります。中古市場は品物が複雑で、等級が高いか低い。中古品を買う人々は市場で安くて質の良いものを選ぶことができる。
+					</p>
+				</div>
+			</div>
+			<div class="carousel-item">
+				<div class="carousel-caption" style="position: static;padding: 10em 15%;">
+					<h4>
+						중고<br>매매
+					</h4>
+					<p>
+						자신이 쓸모 없다고 생각하는 물건을 다른 사람이 등가의 유휴품으로 바꾸어 다시 이용하다.돈을 절약 할 수 있을 뿐만 아니라, 좋아하고 사지도 못 할 물건들을 많이 찾을 수 있다.중고 시장 안의 물품들은 비교적 복잡하고, 품질의 등급도 높고 낮은 것이 있다.중고품을 사는 사람들은 시장에서 물건도 좋고 값도 싼 물건을고를 수 있다.
+					</p>
+				</div>
+			</div>
+		</div>
+	</div> 
+
+	<a class="carousel-control-prev" href="#carousel-426615" data-slide="prev" role="button">
+		<span class="carousel-control-prev-icon" aria-hidden="true"></span> 
+		<span class="sr-only">Previous</span>
+	</a> 
+	<a class="carousel-control-next" href="#carousel-426615" data-slide="next" role="button">
+		<span class="carousel-control-next-icon" aria-hidden="true"></span> 
+		<span class="sr-only">Next</span>
+	</a>
+</div>	
+
+<div class="row" style="background: #eee;padding-bottom: 50px;">
+	<div class="col-md-6 mx-auto">
+		<div class="page-header" style="padding:50px 0">
+			<h1>
+				最新上架! <small>快来抢购吧！</small>
+			</h1>
+		</div>
+		
+		{% for new_goods in new_goodss %}
+			{% if forloop.counter == 4 or forloop.first %}
+			<div class="card-deck">
+			{% endif %}
+				<div class="card">
+		    		<a href="{% url 'store:details' new_goods.id %}"><img class="card-img-top" src="/media/{{ new_goods.goodsPic }}" alt="Card image cap"></a>
+		    		<div class="card-body">	
+		      			<h5 class="card-title">
+		      				{{ new_goods.goodsName }}<br>
+		      				{% if not new_goods.goodsNum %}
+    							<span style="color: #ff5d56;"><已售罄></span>
+    						{% endif %}
+    					
+		      			</h5>
+		      			<p class="card-text" style="overflow: hidden;">
+		      				{{ new_goods.productIntroduction |slice:":100" }}...
+							<a href="{% url 'store:details' new_goods.id %}"><button type="button" class="btn btn-link">[详情]</button></a>
+						</p>
+		    		</div>
+		    		<div class="card-footer">
+		      			<small class="text-muted">{{ new_goods.pubDate }}</small>
+		    		</div>
+		  		</div>
+		  	{% if forloop.counter == 3 or forloop.last %}
+		  	</div>
+		  	{% endif %}
+	  	{% endfor %}
+
+	</div>
+</div>
+
+<div class="row" style="background: #fff;padding-bottom: 50px;">
+	<div class="col-md-6 mx-auto">
+		<div class="page-header" style="padding:50px 0">
+			<h1>
+				热门商品! <small>快来抢购吧！</small>
+			</h1>
+		</div>
+		
+		{% for hot_goods in hot_goodss %}
+			{% if forloop.counter == 4 or forloop.first %}
+			<div class="card-deck">
+			{% endif %}
+				<div class="card">
+		    		<a href="{% url 'store:details' hot_goods.id %}"><img class="card-img-top" src="/media/{{ hot_goods.goodsPic }}" alt="Card image cap"></a>
+		    		<div class="card-body">	
+		      			<h5 class="card-title">
+		      				{{ hot_goods.goodsName }}<br>
+		      				{% if not hot_goods.goodsNum %}
+    							<span style="color: #ff5d56;"><已售罄></span>
+    						{% endif %}
+		      			</h5>
+		      			<p class="card-text" style="overflow: hidden;">
+		      				{{ hot_goods.productIntroduction |slice:":100" }}...
+							<a href="{% url 'store:details' hot_goods.id %}"><button type="button" class="btn btn-link">[详情]</button></a>
+						</p>
+		    		</div>
+		    		<div class="card-footer">
+		      			<small class="text-muted">{{ hot_goods.pubDate }}</small>
+		    		</div>
+		  		</div>
+		  	{% if forloop.counter == 3 or forloop.last %}
+		  	</div>
+		  	{% endif %}
+	  	{% endfor %}
+
+	</div>
+
+
+</div>
+
+
+
+{% endblock content %}

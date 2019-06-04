@@ -1,0 +1,170 @@
+{% extends "store/base.html" %}
+{% load bootstrap4 %}
+{% block content_head %}
+
+<title>我的商铺</title>
+
+<style type="text/css">
+	th,td{
+		vertical-align: baseline !important;
+	}
+	.table th{
+		border-top: none;
+	}
+</style>
+
+{% endblock content_head %}
+{% block content %}
+
+<div class="container">
+
+	<ul class="nav nav-tabs justify-content-center" id="myTab" role="tablist"  style="margin-top: 100px">
+  		<li class="nav-item">
+    		<a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">正在出售</a>
+  		</li>
+  		<li class="nav-item">
+    		<a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">已售罄</a>
+  		</li>
+	</ul>
+	<div class="tab-content" id="myTabContent">
+  		<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab"  style="background-color: #fff;">
+  			<table class="table table-striped">
+		  		<thead>
+		    		<tr>
+			      		<th scope="col">#</th>
+				      	<th scope="col">商品图片</th>
+				      	<th scope="col">商品名称</th>
+				      	<th scope="col">剩余数量</th>
+				      	<th scope="col">选中数量</th>
+				      	<th scope="col">已售数量</th>
+				      	<th scope="col">上架时间</th>
+				      	<th scope="col">下架</th>
+				    </tr>
+			  	</thead>
+			  	<tbody>
+			  		{% for goods in goodss %}
+				    <tr>
+				      	<th scope="row">{{ forloop.counter }}</th>
+				      	<td><img src="/media/{{ goods.goodsPic }}" style="width: 100px;"></td>
+				      	<td>{{ goods.goodsName }}</td>
+				      	<td>{{ goods.goodsNum }}</td>
+				      	<td>{{ goods.goodsSelected }}</td>
+				      	<td>{{ goods.goodssales }}</td>
+				      	<td>{{ goods.pubDate }}</td>
+				      	<td>
+
+				      		<!-- Button trigger modal -->
+							<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#del-{{forloop.counter}}">
+						  		下架
+							</button>
+
+							<!-- Modal -->
+							<div class="modal fade" id="del-{{forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+						  		<div class="modal-dialog" role="document">
+						    		<div class="modal-content alert alert-danger">
+						      			<div class="modal-header">
+						        			<h5 class="modal-title" id="exampleModalLabel">警告</h5>
+						        			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						          				<span aria-hidden="true">&times;</span>
+						        			</button>
+						      			</div>
+						      			<div class="modal-body">
+						       				 您确定要删除商品“{{ goods.goodsName }}”?
+						      			</div>
+						      			<div class="modal-footer">
+						        			<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+						        			<a href="{% url 'store:mysale' goods.id %}" class="btn btn-danger">确定</a>
+						      			</div>
+						    		</div>
+						  		</div>
+							</div>
+
+				      	</td>
+				    </tr>
+				    {% empty %}
+					<tr>
+				      	<th scope="row">NONE</th>
+				      	<td>NONE</td>
+				      	<td>NONE</td>
+				      	<td>NONE</td>
+				      	<td>NONE</td>
+				      	<td>NONE</td>
+				      	<td>NONE</td>
+			    	</tr>
+					{% endfor %}
+			  	</tbody>
+			</table>
+  		</div>
+
+  		<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab"  style="background-color: #fff;">
+  			<table class="table table-striped">
+		  		<thead>
+		    		<tr>
+			      		<th scope="col">#</th>
+				      	<th scope="col">商品图片</th>
+				      	<th scope="col">商品名称</th>
+				      	<th scope="col">上架时间</th>
+				      	<th scope="col">删除</th>
+				    </tr>
+			  	</thead>
+			  	<tbody>
+			  		{% for goods in goods_nones %}
+				    <tr>
+				      	<th scope="row">{{ forloop.counter }}</th>
+				      	<td><img src="/media/{{ goods.goodsPic }}" style="width: 100px;"></td>
+				      	<td>{{ goods.goodsName }}</td>
+				      	<td>{{ goods.pubDate }}</td>
+				      	<td>
+
+				      		<!-- Button trigger modal -->
+							<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#del-{{forloop.counter}}">
+						  		删除
+							</button>
+
+							<!-- Modal -->
+							<div class="modal fade" id="del-{{forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+						  		<div class="modal-dialog" role="document">
+						    		<div class="modal-content alert alert-danger">
+						      			<div class="modal-header">
+						        			<h5 class="modal-title" id="exampleModalLabel">警告</h5>
+						        			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						          				<span aria-hidden="true">&times;</span>
+						        			</button>
+						      			</div>
+						      			<div class="modal-body">
+						       				 您确定要删除商品记录“{{ goods.goodsName }}”?
+						      			</div>
+						      			<div class="modal-footer">
+						        			<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+						        			<a href="{% url 'store:mysale' goods.id %}" class="btn btn-danger">确定</a>
+						      			</div>
+						    		</div>
+						  		</div>
+							</div>
+
+				      	</td>
+				    </tr>
+				    {% empty %}
+					<tr>
+				      	<th scope="row">NONE</th>
+				      	<td>NONE</td>
+				      	<td>NONE</td>
+				      	<td>NONE</td>
+				      	<td>NONE</td>
+			    	</tr>
+					{% endfor %}
+			  	</tbody>
+			</table>
+  		</div>
+	</div>
+
+	
+
+	<div class="row clearfix" style="padding: 100px;">
+		<a href="{% url 'store:add_goods' %}" style="width: 100%">
+			<button type="button" class="btn btn-primary btn-block">添加商品</button>	
+		</a>
+	</div>
+</div>
+
+{% endblock content %}

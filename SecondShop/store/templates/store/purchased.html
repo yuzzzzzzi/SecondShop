@@ -1,0 +1,102 @@
+{% extends "store/base.html" %}
+{% load bootstrap4 %}
+{% block content_head %}
+
+<title>订单详情</title>
+
+<style type="text/css">
+	th,td{
+		vertical-align: baseline !important;
+	}
+	.alert-secondary span{
+		margin: 0 10px;
+		font-weight: bold;
+	}
+</style>
+
+{% endblock content_head %}
+{% block content %}
+
+<div class="container">
+	{% for order in con_orders %}
+	<div class="alert alert-dark" role="alert">
+  		订单{{ forloop.counter }}
+	</div>
+	<table class="table table-striped" style="background-color: #fff;">
+		<thead>
+			<tr>
+	      		<th scope="col">#</th>
+		      	<th scope="col">商品图片</th>
+		      	<th scope="col">商品名称</th>
+		      	<th scope="col">单价</th>
+		      	<th scope="col">数量</th>
+		      	<th scope="col">小计</th>
+		      	<th scope="col">操作</th>
+		    </tr>
+  		</thead>
+	  	<tbody>
+	  		{% for goods in order.goodss %}
+		    <tr>
+		      	<th scope="row" class="goods_id">{{ goods.goods.id }}</th>
+		      	<td><img src="/media/{{ goods.goods.goodsPic }}" style="width: 100px;"></td>
+		      	<td>{{ goods.goods.goodsName }}</td>
+		      	<td>{{ goods.goods.goodsPrice }}</td>
+		      	<td>{{ goods.number }}</td>
+		      	<td class="count">{{ goods.subtotal }}</td>
+		      	<td>
+
+		      		<!-- Button trigger modal -->
+					<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#del-{{forloop.counter}}">
+				  		收货
+					</button>
+
+					<!-- Modal -->
+					<div class="modal fade" id="del-{{forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				  		<div class="modal-dialog" role="document">
+				    		<div class="modal-content">
+				      			<div class="modal-header">
+				        			<h5 class="modal-title" id="exampleModalLabel">提醒</h5>
+				        			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          				<span aria-hidden="true">&times;</span>
+				        			</button>
+				      			</div>
+				      			<div class="modal-body">
+				       				 您确定要收货“{{ goods.goods.goodsName }}”?<br>
+				       				 请确保您已经收到物品！
+				      			</div>
+				      			<div class="modal-footer">
+				        			<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+				        			<a href="{% url 'store:purchased' goods.id %}" class="btn btn-danger">确定</a>
+				      			</div>
+				    		</div>
+				  		</div>
+					</div>
+
+		      	</td>
+		    </tr>
+		    
+		    {% empty %}
+			<tr>
+		      	<th scope="row">NONE</th>
+		      	<td>NONE</td>
+		      	<td>NONE</td>
+		      	<td>NONE</td>
+		      	<td>NONE</td>
+		      	<td>NONE</td>
+		      	<td>NONE</td>
+	    	</tr>
+			{% endfor %}
+	  	</tbody>
+	</table>
+	<div class="alert alert-secondary" role="alert">
+  		收货人:<span>{{ order.name }}</span>联系方式:<span>{{ order.telephone }}</span>收货地址:<span>{{ order.address }}</span>总金额:<span style="color: #dc3545;">￥{{ order.total }}</span>
+	</div>
+	{% empty %}
+	<div class="alert alert-dark" role="alert" style="margin:100px 0;">
+  		暂时没有购买的商品！
+	</div>
+  	{% endfor %}		
+	
+</div>
+
+{% endblock content %}

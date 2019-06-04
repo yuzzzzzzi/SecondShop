@@ -1,0 +1,189 @@
+{% extends "store/base.html" %}
+{% load bootstrap4 %}
+{% block content_head %}
+<title>用户详情</title>
+<script type="text/javascript">
+	$(function () { 
+		$('#sbtn2').click(function () {
+			$(".form-group div").remove();
+			//发起ajax请求，注意csrf攻击
+			$.ajax({
+				'url' : '{% url "user:person" user.id %}', 
+				'type':'post', //请求提交的方式get/post
+				'dataType':'json',
+				'data' : $("#pscform").serialize(),
+				success:function(arg) {   
+   			     	if(arg.status){
+                        console.log('无验证错误信息')
+                        location.href = '/user/login/' //跳转到登陆页面
+                    }
+                    else {
+                        //由于后台返回的值是json中套json，因此此处需要再做一次json解析
+                        var error_list=JSON.parse(arg.errors);
+                        //循环遍历错误列表，自动生成div标签承载错误信息
+                        $.each(error_list,function (itemName, item) {
+                        	var div=  document.createElement('div');
+                        	div.innerHTML='<button class="close" type="button" data-dismiss="alert" aria-label="close">×</button>' + item[0].message;//获取第一条错误信息
+                        	div.setAttribute("class", "alert alert-danger alert-dismissable alert-link");
+                        	div.setAttribute("style", "margin-top:5px;");
+                        	document.getElementById('id_old_password').value = "";
+							document.getElementById('id_new_password1').value = "";
+							document.getElementById('id_new_password2').value = "";
+                        	$('input[name='+itemName+']').after(div);
+                        });
+                    }
+     			},      
+     			error:function (XMLHttpResponse, textStatus, errorThrown) { 
+
+     				console.log("1 异步调用返回失败,XMLHttpResponse.readyState:"+XMLHttpResponse.readyState); 
+     				console.log("2 异步调用返回失败,XMLHttpResponse.status:"+XMLHttpResponse.status); 
+     				console.log("3 异步调用返回失败,textStatus:"+textStatus); 
+     				console.log("4 异步调用返回失败,errorThrown:"+errorThrown);    
+     			},
+			});  
+		}); 
+		$('#sbtn1').click(function () {
+			$(".form-group .alert").remove();
+			var formdata = new FormData();
+			var avatar = $("#id_avatar").get(0).files[0];
+			//var avatar = document.getElementById("id_avatar").files[0];  
+			formdata.append('avatar',avatar);
+			formdata.append('nickname',$("#id_nickname").val());
+			formdata.append('telephone',$("#id_telephone").val());
+			formdata.append('address',$("#id_address").val());
+			formdata.append('major',$("#id_major").val());
+			formdata.append('csrfmiddlewaretoken','{{ csrf_token }}');
+			//发起ajax请求，注意csrf攻击
+			$.ajax({
+				'url' : '{% url "user:person" user.id %}', 
+				'type':'post', //请求提交的方式get/post
+				'dataType':'json',
+				//'data' : $("#mscform").serialize(),
+				'data':formdata,
+				'processData':false, //告诉jQuery不要去处理发送的数据
+            	'contentType':false,// 告诉jQuery不要去设置Content-Type请求头
+				success:function(arg) {   
+   			     	if(arg.status){
+                        console.log('无验证错误信息')
+                        window.location.reload() //刷新当前页面
+                    }
+                    else {
+                        //由于后台返回的值是json中套json，因此此处需要再做一次json解析
+                        var error_list=JSON.parse(arg.errors);
+ 
+                        //循环遍历错误列表，自动生成span标签承载错误信息
+                        $.each(error_list,function (itemName, item) {
+                        	var div=  document.createElement('div');
+                        	div.innerHTML='<button class="close" type="button" data-dismiss="alert" aria-label="close">×</button>' + item[0].message;//获取第一条错误信息
+                        	div.setAttribute("class", "alert alert-danger alert-dismissable alert-link");
+                        	div.setAttribute("style", "margin-top:5px;");
+                        	$('input[name='+itemName+']').after(div);
+                        });
+                    }
+     			},      
+     			error:function (XMLHttpResponse, textStatus, errorThrown) { 
+
+     				console.log("1 异步调用返回失败,XMLHttpResponse.readyState:"+XMLHttpResponse.readyState); 
+     				console.log("2 异步调用返回失败,XMLHttpResponse.status:"+XMLHttpResponse.status); 
+     				console.log("3 异步调用返回失败,textStatus:"+textStatus); 
+     				console.log("4 异步调用返回失败,errorThrown:"+errorThrown);    
+     			},
+			});  
+		}); 
+	});
+
+</script>
+{% endblock content_head %}
+{% block content %}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="card center" style="width:600px;margin:50px auto;margin-top: 200px;">
+			    <div class="card-img-top rounded-circle img-fluid" style="width:300px;height: 300px;position: relative;margin: 0 auto;margin-top: -150px;background-color:#fff;background-image: url(/media/{{ uuser.avatar }}); background-size: cover;border: 1px solid rgba(0,0,0,.125);"></div>
+			    <div class="card-body">
+			      	<h3 class="card-title" style="text-align: center;">{{ uuser.nickname }}</h3>
+			      	<dl>
+			      		<dt>账号：</dt>
+						<dd>{{ uuser.username }}</dd>
+						<dt>个人简介：</dt>
+						<dd>{{ uuser.major }}</dd>
+						<dt>电话号码：</dt>
+						<dd>{{ uuser.telephone }}</dd>
+						<dt>地址：</dt>
+						<dd>{{ uuser.address }}</dd>
+						<dt>管理员：</dt>
+						<dd>{{ uuser.is_admin }}</dd>
+					</dl>
+			      	{% if uuser == request.user  %}
+					<!-- Button trigger modal -->
+					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+					  修改资料
+					</button>
+
+					<!-- Modal -->
+					<div class="modal fade bd-example-modal-lg" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+					  	<div class="modal-dialog modal-dialog-centered  modal-lg" role="document">
+						    <div class="modal-content">
+						      	<div class="modal-header">
+							        <h5 class="modal-title" id="exampleModalLongTitle">修改资料</h5>
+							        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							          <span aria-hidden="true">&times;</span>
+							        </button>
+						      	</div>
+						     
+						        <form class="form" id = "mscform" enctype="multipart/form-data" method="POST">
+									<div class="modal-body">
+										{% csrf_token %}
+										{% bootstrap_form form1 %}					
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+										<button type="button" class="btn btn-primary" id="sbtn1">保存</button>	
+									</div>	
+								</form>	
+
+							</div>
+						</div>
+					</div>
+
+					<!-- Button trigger modal -->
+					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter2" id = "btn2">
+					  修改密码
+					</button>
+
+					<!-- Modal -->
+					<div class="modal fade bd-example-modal-lg" id="exampleModalCenter2" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+					  	<div class="modal-dialog modal-dialog-centered  modal-lg" role="document">
+						    <div class="modal-content">
+						      	<div class="modal-header">
+							        <h5 class="modal-title" id="exampleModalLongTitle">修改密码</h5>
+							        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							          <span aria-hidden="true">&times;</span>
+							        </button>
+						      	</div>
+						     
+						        <form class="form" id = "pscform" >
+									<div class="modal-body">
+										{% csrf_token %}
+										{% bootstrap_form form2 %}					
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+										<button type="button" class="btn btn-primary" id = "sbtn2">保存</button>	
+									</div>	
+								</form>	
+
+							</div>
+						</div>
+					</div>
+					{% endif %}
+
+			    </div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+{% endblock content %}
