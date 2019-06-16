@@ -1,8 +1,8 @@
 from django.shortcuts import render,reverse
 from django.http import HttpResponse,HttpResponseRedirect
-from .models import Comment,Goods,ShoppingCart,Order,Order_goods
+from .models import Comment,Goods,ShoppingCart,Order
 from django.contrib.auth.decorators import login_required
-from .forms import CommentForm,GoodsForm,ShoppingCartForm,OrderForm,Order_goodsForm
+from .forms import CommentForm,GoodsForm,ShoppingCartForm,OrderForm
 import json
 # Create your views here.
 
@@ -143,6 +143,11 @@ def orderCheck(request):
     content = goodss.split(',')
     content = list(set(content))
     print(content)
+    ids = []
+    for entry in content:
+        tlist = entry.split("*")
+        ids.append(tlist[0])
+    print(ids)
     form = OrderForm(request.POST)
     if form.is_valid():
         
@@ -152,7 +157,7 @@ def orderCheck(request):
         new_order.content = request.POST['content']
         new_order.save()
 
-        for goods_id in content:
+        for goods_id in ids:
             goods = Goods.objects.get(id=int(goods_id))
             carts = goods.shoppingcart_set.filter(owner=request.user)
             for cart in carts:
@@ -181,36 +186,55 @@ def orderCheck(request):
         return HttpResponse(json.dumps(error_list))
 
 @login_required
-def purchased(request,ogoods_id):
-    try:
-        ogoods = Order_goods.objects.get(id=ogoods_id)
-        dorder = ogoods.order
-        dorder.total -= ogoods.subtotal  
-        ogoods.delete()
-        print(dorder.total)
-        if dorder.total == 0.0:
-            dorder.delete()
+def purchased(request,order_id):
+    if request.method == "POST":
+        print(request.POST)
+        print(order_id)
+        tar_order = Order.objects.get(id=order_id)
+        tar_content = tar_order.content
+        tar_goods = Goods.objects.get(id=request.POST["gid"])
+        tconlist = tar_content.split(",")
+        for i in range(len(tconlist)):
+            tconitemlist = tconlist[i].split("*")
+            if tconitemlist[0] == request.POST["gid"]:
+                tconlist.pop(i)
+                tar_num = int(tconitemlist[1])
+                break
+        print(tconlist)
+        editcontent =  ",".join(tconlist)
+        tar_order.total -= tar_goods.goodsPrice * tar_num  
+        tar_order.content = editcontent
+        if tar_order.total == 0.0:
+            tar_order.delete()
         else:
-            dorder.save() 
-    except:
-        pass
-    orders = Order.objects.filter(owner=request.user).order_by('-id')
-    # print(orders)
-    con_orders = []
-    
-    for order in orders:
-        dic_order = {}
-        dic_order["name"] = order.name
-        dic_order["telephone"] = order.telephone
-        dic_order["address"] = order.address
-        dic_order["total"] = order.total
-        goodss = []
-        order_goodss = order.order_goods_set.filter(order=order)
-        for goods in order_goodss:
-            goodss.append(goods)
-        dic_order["goodss"] = goodss
-        # print(dic_order)
-        con_orders.append(dic_order)
-    # print(con_orders)
-    context = {'con_orders':con_orders}
-    return render(request,'store/purchased.html', context)
+            tar_order.save() 
+        return HttpResponseRedirect(reverse('store:purchased'))
+    else:
+        orders = Order.objects.filter(owner=request.user).order_by('-id')
+        con_orders = []
+        for order in orders:
+            dic_order = {}
+            dic_order["name"] = order.name
+            dic_order["telephone"] = order.telephone
+            dic_order["address"] = order.address
+            dic_order["total"] = order.total
+            dic_order["id"] = order.id
+            goodss = []
+            order_content = order.content
+            order_content_list = order_content.split(",")
+            for entry in order_content_list:
+                tlist = entry.split("*")
+                print(tlist)
+                goods_content = {}
+                goods = Goods.objects.get(id = int(tlist[0]))
+                goods_content["goods"] = goods
+                goods_content["num"] = int(tlist[1])
+                subtotal = goods.goodsPrice * int(tlist[1])
+                goods_content["subtotal"] = subtotal
+                goodss.append(goods_content)
+            dic_order["goodss"] = goodss
+            # print(dic_order)
+            con_orders.append(dic_order)
+        # print(con_orders)
+        context = {'con_orders':con_orders}
+        return render(request,'store/purchased.html', context)

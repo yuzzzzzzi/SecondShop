@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Goods,Comment,ShoppingCart,Order,Order_goods
+from .models import Goods,Comment,ShoppingCart,Order
 from .forms import ShoppingCartForm 
 # Register your models here.
 
@@ -18,13 +18,10 @@ class ShoppingCartAdmin(admin.ModelAdmin):
     list_display = ('owner','goods','number','subtotal')
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('owner','name','address','telephone','total')
+    list_display = ('owner','name','address','telephone','content','total')
 
-class Order_goodsAdmin(admin.ModelAdmin):
-    list_display = ('order','goods','number','subtotal')
 
 admin.site.register(Goods, GoodsAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(ShoppingCart, ShoppingCartAdmin)
 admin.site.register(Order, OrderAdmin)
-admin.site.register(Order_goods, Order_goodsAdmin)

@@ -35,14 +35,14 @@
 		    </tr>
   		</thead>
 	  	<tbody>
-	  		{% for goods in order.goodss %}
+	  		{% for goods_content in order.goodss %}
 		    <tr>
-		      	<th scope="row" class="goods_id">{{ goods.goods.id }}</th>
-		      	<td><img src="/media/{{ goods.goods.goodsPic }}" style="width: 100px;"></td>
-		      	<td>{{ goods.goods.goodsName }}</td>
-		      	<td>{{ goods.goods.goodsPrice }}</td>
-		      	<td>{{ goods.number }}</td>
-		      	<td class="count">{{ goods.subtotal }}</td>
+		      	<th scope="row" class="goods_id">{{ goods_content.goods.id }}</th>
+		      	<td><img src="/media/{{ goods_content.goods.goodsPic }}" style="width: 100px;"></td>
+		      	<td>{{ goods_content.goods.goodsName }}</td>
+		      	<td>{{ goods_content.goods.goodsPrice }}</td>
+		      	<td>{{ goods_content.num }}</td>
+		      	<td class="count">{{ goods_content.subtotal }}</td>
 		      	<td>
 
 		      		<!-- Button trigger modal -->
@@ -61,12 +61,16 @@
 				        			</button>
 				      			</div>
 				      			<div class="modal-body">
-				       				 您确定要收货“{{ goods.goods.goodsName }}”?<br>
+				       				 您确定要收货“{{ goods_content.goods.goodsName }}”?<br>
 				       				 请确保您已经收到物品！
 				      			</div>
 				      			<div class="modal-footer">
 				        			<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-				        			<a href="{% url 'store:purchased' goods.id %}" class="btn btn-danger">确定</a>
+									<form method="POST" action = "{% url 'store:purchased' order.id %}">
+			  							{% csrf_token %}
+										<input type="hidden" value="{{ goods_content.goods.id }}" name="gid">
+					        			<button type="submit" class="btn btn-danger">确定</a>
+									</form>
 				      			</div>
 				    		</div>
 				  		</div>

@@ -12,6 +12,6 @@ urlpatterns = [
     path('addCheck/',views.addCheck,name='addCheck'),
     re_path(r'shoppingcart/(?P<cart_id>\d+)?',views.shoppingcart,name='shoppingcart'),
     path('orderCheck/',views.orderCheck,name='orderCheck'),
-    re_path(r'purchased/(?P<ogoods_id>\d+)?',views.purchased,name='purchased'),
+    re_path(r'purchased/(?P<order_id>\d+)?',views.purchased,name='purchased'),
     re_path(r'shop/(?P<type_id>\d+)?',views.shop,name='shop'),
 ]

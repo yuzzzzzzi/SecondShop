@@ -12,9 +12,7 @@
 		});
 		$("#sum").text("￥" + sum);
 		$("#id_total").text(sum);
-
 	});
-
 </script>
 
 <script type="text/javascript">
@@ -24,9 +22,19 @@
 			//发起ajax请求，注意csrf攻击
 			var formdata = new FormData();	
 			var content = [];
+			var goods_ids = [];
+			var goods_nums = [];
 			$(".goods_id").each(function(){
-				content.push(($(this).text()));
+				goods_ids.push(($(this).text()));
 			});
+			$(".goods_num").each(function(){
+				goods_nums.push($(this).text());
+			});
+			for(var i=0;i<goods_nums.length;i++){
+				var goodscontent = goods_ids[i] + "*" + goods_nums[i];
+				content.push(goodscontent);
+			};
+			console.log(content);
 			formdata.append('name',$("#id_name").val());
 			formdata.append('telephone',$("#id_telephone").val());
 			formdata.append('address',$("#id_address").val());
@@ -107,7 +115,7 @@
 		      	<td><img src="/media/{{ goods.goods.goodsPic }}" style="width: 100px;"></td>
 		      	<td>{{ goods.goods.goodsName }}</td>
 		      	<td>{{ goods.goods.goodsPrice }}</td>
-		      	<td>{{ goods.number }}</td>
+		      	<td class="goods_num">{{ goods.number }}</td>
 		      	<td class="count">{{ goods.subtotal }}</td>
 		      	<td>
 

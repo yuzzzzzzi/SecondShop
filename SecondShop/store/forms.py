@@ -1,5 +1,5 @@
 from django import forms
-from .models import Comment,Goods,ShoppingCart,Order,Order_goods
+from .models import Comment,Goods,ShoppingCart,Order
 import re
 
 class GoodsForm(forms.ModelForm):
@@ -34,9 +34,3 @@ class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ('name','address','telephone')
-
-class Order_goodsForm(forms.ModelForm):
-
-    class Meta:
-        model = Order_goods
-        fields = ('number',)

@@ -70,10 +70,4 @@ class Order(models.Model):
     address = models.CharField(verbose_name='地址',max_length=200)
     telephone = models.CharField(verbose_name='电话号码',max_length=11)
     total = models.FloatField(verbose_name='总金额')
-    # content = models.CharField(verbose_name='商品',max_length=400)
-
-class Order_goods(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    goods = models.ForeignKey(Goods, on_delete=models.CASCADE)
-    number = models.PositiveIntegerField(verbose_name='购买数量', blank=True, null=True) 
-    subtotal = models.FloatField(verbose_name='小计', blank=True, null=True)
+    content = models.CharField(verbose_name='商品',max_length=400)

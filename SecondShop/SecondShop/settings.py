@@ -80,19 +80,19 @@ WSGI_APPLICATION = 'SecondShop.wsgi.application'
 
 DATABASES = {
 	# ------------------------SQLite3 数据库配置(无需安装，可直接使用)------------------------
-	'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+	# 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # }
 	# ------------------------MYSQL 数据库配置(需要安装MYSQL数据库)--------------------------
-    #'default': {
-    #    'ENGINE': 'django.db.backends.mysql',
-    #    'NAME': 'second_shop',
-    #    'USER': 'root',
-    #    'PASSWORD': 'liu998wei',
-    #    'HOST': '127.0.0.1',
-    #    'PORT': '3306',
-    #}
+    'default': {
+       'ENGINE': 'django.db.backends.mysql',
+       'NAME': 'second_shop',
+       'USER': 'root',
+       'PASSWORD': 'liu998wei',
+       'HOST': '127.0.0.1',
+       'PORT': '3306',
+    }
 	
 	# -----------------------SQL Server 数据库配置(需要安装SQL Server数据库)----------------------
     #'default': {        
