@@ -101,6 +101,20 @@ def addCheck(request):
     # print(number)
     # print(goods.goodsNum)
     if form.is_valid():
+        added_goodss = ShoppingCart.objects.filter(owner = request.user)
+        print("------------1----------")
+        for added_goods in added_goodss:
+            print("------------2----------")
+            if goods == added_goods.goods:
+                print("------------3----------")
+                added_goods.number += int(number)
+                added_goods.subtotal += float(number) * goods.goodsPrice
+                goods.goodsNum -= int(number)
+                goods.goodsSelected += int(number)
+                goods.save()
+                added_goods.save()
+                error_list['status'] = True
+                return HttpResponse(json.dumps(error_list))
         new_goods = form.save(commit=False)
         new_goods.owner = request.user
         new_goods.subtotal = float(number) * goods.goodsPrice
