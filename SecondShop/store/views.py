@@ -175,13 +175,6 @@ def orderCheck(request):
             goods = Goods.objects.get(id=int(goods_id))
             carts = goods.shoppingcart_set.filter(owner=request.user)
             for cart in carts:
-                form2 = Order_goodsForm()
-                order_goods = form2.save(commit=False)
-                order_goods.number = cart.number
-                order_goods.subtotal = cart.subtotal
-                order_goods.order = new_order
-                order_goods.goods = cart.goods
-                order_goods.save()
                 number = cart.number
                 cart.delete()
                 goods.goodssales += number
