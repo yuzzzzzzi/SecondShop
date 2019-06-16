@@ -102,11 +102,8 @@ def addCheck(request):
     # print(goods.goodsNum)
     if form.is_valid():
         added_goodss = ShoppingCart.objects.filter(owner = request.user)
-        print("------------1----------")
         for added_goods in added_goodss:
-            print("------------2----------")
             if goods == added_goods.goods:
-                print("------------3----------")
                 added_goods.number += int(number)
                 added_goods.subtotal += float(number) * goods.goodsPrice
                 goods.goodsNum -= int(number)
@@ -156,12 +153,10 @@ def orderCheck(request):
     # print(goodss)
     content = goodss.split(',')
     content = list(set(content))
-    print(content)
     ids = []
     for entry in content:
         tlist = entry.split("*")
         ids.append(tlist[0])
-    print(ids)
     form = OrderForm(request.POST)
     if form.is_valid():
         
@@ -195,8 +190,6 @@ def orderCheck(request):
 @login_required
 def purchased(request,order_id):
     if request.method == "POST":
-        print(request.POST)
-        print(order_id)
         tar_order = Order.objects.get(id=order_id)
         tar_content = tar_order.content
         tar_goods = Goods.objects.get(id=request.POST["gid"])
@@ -207,7 +200,6 @@ def purchased(request,order_id):
                 tconlist.pop(i)
                 tar_num = int(tconitemlist[1])
                 break
-        print(tconlist)
         editcontent =  ",".join(tconlist)
         tar_order.total -= tar_goods.goodsPrice * tar_num  
         tar_order.content = editcontent
@@ -231,7 +223,6 @@ def purchased(request,order_id):
             order_content_list = order_content.split(",")
             for entry in order_content_list:
                 tlist = entry.split("*")
-                print(tlist)
                 goods_content = {}
                 goods = Goods.objects.get(id = int(tlist[0]))
                 goods_content["goods"] = goods
