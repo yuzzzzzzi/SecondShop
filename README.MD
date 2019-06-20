@@ -2,6 +2,10 @@
 二手交易市场，使用Python主流框架Django进行搭建，使用pyvenv进行应用层Python环境隔离，使用时可直接进入隔离环境中进行操作。
 该环境中有项目所需要的依赖包，无需担心项目依赖包的问题，二次开发也推荐在隔离环境中进行。
 
+# Ver 1.2 更新
+
+增加viewsNativeSQL.py 使用原生SQL语句对SQL Server数据库进行操作。
+
 # Ver 1.1 更新
 1.删除order_goods表减少数据库冗余
 
