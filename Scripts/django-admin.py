@@ -1,4 +1,4 @@
-#!e:\second_shop_mysql\scripts\python.exe
+#!e:\secondshop\scripts\python.exe
 from django.core import management
 
 if __name__ == "__main__":

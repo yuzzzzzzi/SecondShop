@@ -1,0 +1,256 @@
+{% extends "store/base.html" %}
+{% load bootstrap4 %}
+{% block content_head %}
+
+<title>购物车</title>
+
+<script type="text/javascript">
+	$(function () { 
+		var sum = 0;
+		$(".count").each(function(){
+			sum += parseFloat($(this).text());
+		});
+		$("#sum").text("￥" + sum);
+		$("#id_total").text(sum);
+	});
+</script>
+
+<script type="text/javascript">
+	$(function () { 
+		$('#confirm').click(function () {
+			$(".form-group div").remove();
+			//发起ajax请求，注意csrf攻击
+			var formdata = new FormData();	
+			var content = [];
+			var goods_ids = [];
+			var goods_nums = [];
+			$(".goods_id").each(function(){
+				goods_ids.push(($(this).text()));
+			});
+			$(".goods_num").each(function(){
+				goods_nums.push($(this).text());
+			});
+			for(var i=0;i<goods_nums.length;i++){
+				var goodscontent = goods_ids[i] + "*" + goods_nums[i];
+				content.push(goodscontent);
+			};
+			console.log(content);
+			formdata.append('name',$("#id_name").val());
+			formdata.append('telephone',$("#id_telephone").val());
+			formdata.append('address',$("#id_address").val());
+			formdata.append('total',$("#id_total").text());
+			formdata.append('content',content);
+			formdata.append('csrfmiddlewaretoken','{{ csrf_token }}');
+			$.ajax({
+				'url' : '{% url "store:orderCheck" %}', 
+				'type':'post', //请求提交的方式get/post
+				'dataType':'json',
+				'data' : formdata,
+				'processData': false,
+				'contentType': false,
+				success:function(arg) {   
+   			     	if(arg.status){
+                        console.log('无验证错误信息')
+                        window.location.reload() //刷新页面
+                    }
+                    else {
+                        //由于后台返回的值是json中套json，因此此处需要再做一次json解析
+                        var error_list=JSON.parse(arg.errors);
+                        //循环遍历错误列表，自动生成div标签承载错误信息
+                        $.each(error_list,function (itemName, item) {
+                        	var div=  document.createElement('div');
+                        	div.innerHTML='<button class="close" type="button" data-dismiss="alert" aria-label="close">×</button>' + item[0].message;//获取第一条错误信息
+                        	div.setAttribute("class", "alert alert-danger alert-dismissable alert-link");
+                        	div.setAttribute("style", "margin-top:5px;");
+                        	$('input[name='+itemName+']').after(div);
+                        });
+                    }
+     			},      
+     			error:function (XMLHttpResponse, textStatus, errorThrown) { 
+
+     				console.log("1 异步调用返回失败,XMLHttpResponse.readyState:"+XMLHttpResponse.readyState); 
+     				console.log("2 异步调用返回失败,XMLHttpResponse.status:"+XMLHttpResponse.status); 
+     				console.log("3 异步调用返回失败,textStatus:"+textStatus); 
+     				console.log("4 异步调用返回失败,errorThrown:"+errorThrown);  
+     				location.href = '/user/login/'; 
+     			},
+			});  
+		});  
+	});
+
+</script>
+
+<style type="text/css">
+	th,td{
+		vertical-align: baseline !important;
+	}
+	#sum{
+		color: #dc3545;
+		font-size: 2em;
+	}
+</style>
+
+{% endblock content_head %}
+{% block content %}
+
+<div class="container">
+
+	<table class="table table-striped" style="margin-top: 100px;background-color: #fff;">
+		<thead>
+			<tr>
+	      		<th scope="col">#</th>
+		      	<th scope="col">商品图片</th>
+		      	<th scope="col">商品名称</th>
+		      	<th scope="col">单价</th>
+		      	<th scope="col">数量</th>
+		      	<th scope="col">小计</th>
+		      	<th scope="col">操作</th>
+		    </tr>
+  		</thead>
+	  	<tbody>
+	  		{% for goods in goodss %}
+	  	
+		    <tr>
+		      	<th scope="row" class="goods_id">{{ goods.goods_id }}</th>
+		      	<td><img src="/media/{{ goods.goodsPic }}" style="width: 100px;"></td>
+		      	<td>{{ goods.goodsName }}</td>
+		      	<td>{{ goods.goodsPrice }}</td>
+		      	<td class="goods_num">{{ goods.number }}</td>
+		      	<td class="count">{{ goods.subtotal }}</td>
+		      	<td>
+
+		      		<!-- Button trigger modal -->
+					<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#del-{{forloop.counter}}">
+				  		删除
+					</button>
+
+					<!-- Modal -->
+					<div class="modal fade" id="del-{{forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				  		<div class="modal-dialog" role="document">
+				    		<div class="modal-content alert alert-danger">
+				      			<div class="modal-header">
+				        			<h5 class="modal-title" id="exampleModalLabel">警告</h5>
+				        			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          				<span aria-hidden="true">&times;</span>
+				        			</button>
+				      			</div>
+				      			<div class="modal-body">
+				       				 您确定要删除商品“{{ goods.goodsName }}”?
+				      			</div>
+				      			<div class="modal-footer">
+				        			<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+				        			<a href="{% url 'store:shoppingcart' goods.id %}" class="btn btn-danger">确定</a>
+				      			</div>
+				    		</div>
+				  		</div>
+					</div>
+
+		      	</td>
+		    </tr>
+		    {% if forloop.last %}
+	      	<tr>
+		      	<th scope="row" colspan="2">总计：</th>
+		      	<td colspan="5" id="sum"></td>
+	    	</tr>
+		    {% endif %}
+		    {% empty %}
+			<tr>
+		      	<th scope="row">NONE</th>
+		      	<td>NONE</td>
+		      	<td>NONE</td>
+		      	<td>0</td>
+		      	<td>0</td>
+		      	<td>0</td>
+		      	<td>NONE</td>
+	    	</tr>
+	    	<tr>
+		      	<th scope="row" colspan="2">总计：</th>
+		      	<td colspan="5"></td>
+	    	</tr>
+			{% endfor %}
+	  	</tbody>
+	</table>
+  			
+	{% if goodss %}
+	<div class="row clearfix" style="padding: 100px;">
+		<button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#exampleModalCenter">
+		  结算
+		</button>
+	</div>
+		<!-- Modal -->
+	<div class="modal fade bd-example-modal-lg" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  	<div class="modal-dialog modal-dialog-centered  modal-lg" role="document">
+		    <div class="modal-content">
+		      	<div class="modal-header">
+			        <h5 class="modal-title" id="exampleModalLongTitle">订单</h5>
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          <span aria-hidden="true">&times;</span>
+			        </button>
+		      	</div>
+
+		        <form class="form">
+					<div class="modal-body" id = "ordermsg">
+						<div class="form-group">
+							<label for="id_content">商品列表</label>
+							<ul id = id_content>
+								{% for goods in goodss %}
+								{% if not goods.saled %}
+								<li>
+									{{ goods.goodsName }}<span style = "margin:0 10px">*</span>{{ goods.number }}
+								</li>
+								{% endif %}
+								{% endfor %}
+							</ul>
+						</div>
+						<div class="form-group">
+							<label for="id_total">总计</label>
+							<p>￥<span id = "id_total"></span></p>
+						</div>
+						{% csrf_token %}
+						{% bootstrap_form form %}					
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary" id="confirm">下单</button>	
+					</div>	
+				</form>	
+
+			</div>
+		</div>
+	</div>	
+
+	
+	{% else %}
+	<div class="row clearfix" style="padding: 100px;">
+		<a href="#" style="width: 100%">
+			<!-- Button trigger modal -->
+			<button type="button" class="btn btn-secondary btn-block" data-toggle="modal" data-target="#total">
+		  		结算
+			</button>
+
+			<!-- Modal -->
+			<div class="modal fade" id="total" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  		<div class="modal-dialog" role="document">
+		    		<div class="modal-content alert alert-danger">
+		      			<div class="modal-header">
+		        			<h5 class="modal-title" id="exampleModalLabel">警告</h5>
+		        			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          				<span aria-hidden="true">&times;</span>
+		        			</button>
+		      			</div>
+		      			<div class="modal-body">
+		       				 您购物车中没有任何商品
+		      			</div>
+		      			<div class="modal-footer">
+		        			<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+		        			<button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+		      			</div>
+		    		</div>
+		  		</div>
+			</div>
+		</a>
+	</div>
+	{% endif %}
+</div>
+
+{% endblock content %}

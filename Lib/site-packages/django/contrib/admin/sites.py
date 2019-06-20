@@ -300,7 +300,6 @@ class AdminSite:
             'site_url': site_url,
             'has_permission': self.has_permission(request),
             'available_apps': self.get_app_list(request),
-            'is_popup': False,
         }
 
     def password_change(self, request, extra_context=None):
@@ -432,8 +431,6 @@ class AdminSite:
                 'name': capfirst(model._meta.verbose_name_plural),
                 'object_name': model._meta.object_name,
                 'perms': perms,
-                'admin_url': None,
-                'add_url': None,
             }
             if perms.get('change') or perms.get('view'):
                 model_dict['view_only'] = not perms.get('change')

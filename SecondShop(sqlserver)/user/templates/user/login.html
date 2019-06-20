@@ -1,0 +1,37 @@
+{% extends "store/base.html" %}
+{% load bootstrap4 %}
+{% block content_head %}
+<title>登陆</title>
+{% endblock content_head %}
+{% block content %}
+
+<div class="container">
+	<div class="row clearfix"  style="margin-top: 100px;">
+		<div class="col-md-12 column">
+			<h2>登录你的账号</h2>
+			<form method="post" action="{% url 'user:ulogin' %}">
+			  <div class="form-group">
+			  	{% csrf_token %}
+			    <label for="exampleInputEmail1">用户名</label>
+			    <input type="username" class="form-control"  placeholder="请输入用户名" name="username">
+			    <small id="emailHelp" class="form-text text-muted">We'll never share your username with anyone else.</small>
+			  </div>
+			  <div class="form-group">
+			    <label for="exampleInputPassword1">密码</label>
+			    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="密码" name="password">
+			  </div>
+			  <div class="form-check">
+			    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+			    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+			  </div>
+			  
+			  	<button type="submit" class="btn btn-primary">登录</button>
+			 
+			  <input type="hidden" name="next" value="{% url 'store:index' %}"/>
+			</form>
+			
+		</div>
+	</div>
+</div>
+
+{% endblock content %}

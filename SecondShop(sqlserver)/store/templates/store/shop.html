@@ -1,0 +1,96 @@
+{% extends "store/base.html" %}
+{% load bootstrap4 %}
+{% block content_head %}
+
+<title>商品</title>
+
+<style type="text/css">
+	a{
+		color: #000;
+	}
+</style>
+
+{% endblock content_head %}
+
+{% block content %}
+
+<div class="container-fluid" style="height: 100%">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link active" href="{% url 'store:shop' %}">
+                  全部 <span class="sr-only">(current)</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'store:shop' 1 %}">
+                  书籍
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'store:shop' 2 %}">
+                  手机
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'store:shop' 3 %}">
+                  电脑
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'store:shop' 4 %}">
+                  衣服
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'store:shop' 5 %}">
+                  其他
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+        	
+          	<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+            	<h1 class="h2">
+            		{{ goods_type }}
+            	</h1>
+          	</div>
+          	{% for goods in goodss %}
+	  		<li class="media" style="border-bottom: 1px solid #d6d8db;margin: 10px 0;">
+	    		<a href="{% url 'store:details' goods.id %}">
+	    			<div class="mr-3" style="width:100px;height: 100px;background-color:#fff;background-image: url(/media/{{ goods.goodsPic }}); background-size: cover;"></div>
+	    		</a>
+	    		<div class="media-body">
+	      			<a href="{% url 'store:details' goods.id %}">
+	      				<h5 class="mt-0 mb-1">{{ goods.goodsName }}</h5>
+	      			</a>
+	      			<p class="card-text" style="overflow: hidden;">
+		      			{{ goods.productIntroduction |slice:":100" }}...
+						<a href="{% url 'store:details' goods.id %}">
+							<button type="button" class="btn btn-link">[详情]</button>
+						</a>
+					</p>
+	      			<p style="margin-top: 10px;">
+			      		<small class="text-muted">{{ goods.pubDate }}</small>
+			    	</p>
+	    		</div>
+	  		</li>
+	  		{% empty %}
+	  		<li class="media" style="border-bottom: 1px solid #d6d8db;margin: 10px 0;">
+	    		<div class="media-body">
+	      			暂时还没有商品哦!
+	    		</div>
+	  		</li>
+	  		{% endfor %}
+
+        </main>
+      </div>
+    </div>
+
+
+{% endblock content %}

@@ -1,0 +1,196 @@
+{% extends "store/base.html" %}
+{% load bootstrap4 %}
+{% block content_head %}
+
+<title>商品详情</title>
+
+<style type="text/css">
+	h5{
+		color: #000;
+	}
+</style>
+<script type="text/javascript">
+	$(function () { 
+		$('#add').click(function () {
+			$(".form-group div").remove();
+			//发起ajax请求，注意csrf攻击
+			var formdata = new FormData();	
+			formdata.append('number',$("#id_number").val());
+			formdata.append('id','{{goods.id}}');
+			formdata.append('csrfmiddlewaretoken','{{ csrf_token }}');
+
+			$.ajax({
+				'url' : '{% url "store:addCheck" %}', 
+				'type':'post', //请求提交的方式get/post
+				'dataType':'json',
+				'data' : formdata,
+				'processData': false,
+				'contentType': false,
+				success:function(arg) {   
+   			     	if(arg.status){
+                        console.log('无验证错误信息')
+                        window.location.reload() //刷新页面
+                    }
+                    else {
+                        //由于后台返回的值是json中套json，因此此处需要再做一次json解析
+                        var error_list=JSON.parse(arg.errors);
+                        //循环遍历错误列表，自动生成div标签承载错误信息
+                        $.each(error_list,function (itemName, item) {
+                        	var div=  document.createElement('div');
+                        	div.innerHTML='<button class="close" type="button" data-dismiss="alert" aria-label="close">×</button>' + item[0].message;//获取第一条错误信息
+                        	div.setAttribute("class", "alert alert-danger alert-dismissable alert-link");
+                        	div.setAttribute("style", "margin-top:5px;");
+                        	$('input[name='+itemName+']').after(div);
+                        });
+                    }
+     			},      
+     			error:function (XMLHttpResponse, textStatus, errorThrown) { 
+
+     				console.log("1 异步调用返回失败,XMLHttpResponse.readyState:"+XMLHttpResponse.readyState); 
+     				console.log("2 异步调用返回失败,XMLHttpResponse.status:"+XMLHttpResponse.status); 
+     				console.log("3 异步调用返回失败,textStatus:"+textStatus); 
+     				console.log("4 异步调用返回失败,errorThrown:"+errorThrown);  
+     				location.href = '/user/login/'; 
+     			},
+			});  
+		});  
+	});
+
+</script>
+<style type="text/css">
+	h3{
+		color: #ff5d56;
+	}
+</style>
+
+{% endblock content_head %}
+{% block content %}
+
+<div class="container">
+	<div class="media" style="margin-top: 100px; ">
+  		<img class="align-self-start mr-3" src="/media/{{ goods.goodsPic }}" alt="Generic placeholder image" style="width: 300px;">
+  		<div class="media-body">
+    		<h2 class="mt-0">
+    			<strong>{{ goods.goodsName }}</strong>
+    			{% if not goods.goodsNum %}
+    			<span style="color: #ff5d56;margin-left: 20px;"><已售罄></span>
+    			{% endif %}
+    		</h2>
+    		<h3>￥{{ goods.goodsPrice }}</h3>
+    		<p>
+    			商品介绍：
+    			<br>
+    			{{ goods.productIntroduction }}
+    		</p>
+    		<p>
+    			商品数量：<strong>{{ goods.goodsNum }}</strong>
+    			<span style="float: right;">商品销量：<strong>{{ goods.goodssales }}</strong></span>
+    		</p>
+    		<p>售货人：<strong><a href="{% url 'user:person' goods.owner_id %}">{{ goods.nickname }}</a></strong></p>
+    		<p>联系方式：<strong>{{ goods.telephone }}</strong></p>
+    		<p>上架时间：{{ goods.pubDate }}</p>
+  		</div>
+	</div>
+
+	<div class="row clearfix" style="padding: 50px 100px 100px;">
+		{% ifequal user.id  goods.owner_id  %}
+		<button type="button" class="btn btn-secondary btn-block">您不能购买自己的商品</button>
+		{% else %}
+			{% if goods.goodsNum %}
+			<!-- Button trigger modal -->
+			<button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#exampleModalCenter2">
+			  加入购物车
+			</button>
+
+			<!-- Modal -->
+			<div class="modal fade bd-example-modal-lg" id="exampleModalCenter2" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+			  	<div class="modal-dialog modal-dialog-centered  modal-lg" role="document">
+				    <div class="modal-content">
+				      	<div class="modal-header">
+					        <h5 class="modal-title" id="exampleModalLongTitle">加入购物车</h5>
+					        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					          <span aria-hidden="true">&times;</span>
+					        </button>
+				      	</div>
+				     
+				        <form class="form" id = "pscform" >
+							<div class="modal-body">
+								{% csrf_token %}
+								{% bootstrap_form form2 %}					
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+								<button type="button" class="btn btn-primary" id = "add">确定</button>	
+							</div>	
+						</form>	
+
+					</div>
+				</div>
+			</div>
+			{% else %}
+			<button type="button" class="btn btn-secondary btn-block">已售磬</button>
+			{% endif %}
+		{% endifequal %}
+
+	</div>
+	<div class="alert alert-secondary" role="alert">
+  		商品评价
+	</div>
+	<ul class="list-unstyled">
+		{% for comment in comments %}
+  		<li class="media" style="border-bottom: 1px solid #d6d8db;margin: 10px 0;">
+    		<a href="{% url 'user:person' comment.owner_id %}"><div class="mr-3" style="width:100px;height: 100px;background-color:#fff;background-image: url(/media/{{ comment.avatar }}); background-size: cover;"></div></a>
+    		<div class="media-body">
+      			<a href="{% url 'user:person' comment.owner_id %}"><h5 class="mt-0 mb-1">{{ comment.nickname }}</h5></a>
+      			{{ comment.content }}
+      			<p style="margin-top: 10px;">
+		      		<small class="text-muted">{{ comment.pubDate }}</small>
+		    	</p>
+    		</div>
+  		</li>
+  		{% empty %}
+  		<li class="media" style="border-bottom: 1px solid #d6d8db;margin: 10px 0;">
+    		<div class="media-body">
+      			暂时还没有评论哦!
+    		</div>
+  		</li>
+  		{% endfor %}
+  		<li class="media" style="margin: 10px 0;">
+    		<div class="media-body">
+      			<!-- Button trigger modal -->
+				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+				  发表评论
+				</button>
+				<!-- Modal -->
+				<div class="modal fade bd-example-modal-lg" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+				  	<div class="modal-dialog modal-dialog-centered  modal-lg" role="document">
+					    <div class="modal-content">
+					      	<div class="modal-header">
+						        <h5 class="modal-title" id="exampleModalLongTitle">发表评论</h5>
+						        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						          <span aria-hidden="true">&times;</span>
+						        </button>
+					      	</div>
+
+					        <form class="form" action="{% url 'store:details' goods.id %}" method="POST">
+								<div class="modal-body">
+									{% csrf_token %}
+									{% bootstrap_form form1 %}					
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+									<button type="submit" class="btn btn-primary">发表</button>	
+								</div>	
+							</form>	
+
+						</div>
+					</div>
+				</div>
+				
+    		</div>
+  		</li>
+	</ul>
+
+</div>
+
+{% endblock content %}
